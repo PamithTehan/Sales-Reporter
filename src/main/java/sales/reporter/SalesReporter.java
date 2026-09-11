@@ -46,5 +46,29 @@ public class SalesReporter {
         return bestSellingProduct;
     }
 
+    public Product findHighestRevenueProduct(List<Product> products){
+        Product highestRevenueProduct = null;
+        BigDecimal highestRevenue = null;
+
+        for(Product product:products){
+
+            if(highestRevenue == null || highestRevenue.compareTo(product.getRevenue()) > 0){
+                highestRevenueProduct = product;
+                highestRevenue = product.getRevenue();
+            }
+        }
+
+        return highestRevenueProduct;
+    }
+
+    public BigDecimal calculateGrandTotal(List<Product> products ){
+        BigDecimal grandTotal = BigDecimal.ZERO;
+
+        for(Product product: products){
+            grandTotal = grandTotal.add(product.getRevenue());
+        }
+
+        return grandTotal;
+    }
 
 }
