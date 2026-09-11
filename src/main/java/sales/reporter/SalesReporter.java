@@ -13,6 +13,21 @@ public class SalesReporter {
     //Highest revenue product (product with the highest total revenue)
     //Grand total revenue (sum of all product revenues)
 
+    public SalesSummary calculate(List<Product> products) {
+        if (products == null || products.isEmpty()) {
+            throw new IllegalArgumentException("Cannot calculate a summary from an empty product list");
+        }
+
+        Map<Product, BigDecimal> revenuePerProduct = TotalRevenuePerProduct(products);
+        Map<String, BigDecimal> revenuePerCategory = totalRevenuePerCategory(products);
+        Product bestSeller = findBestSellingProduct(products);
+        Product highestRevenue = findHighestRevenueProduct(products);
+        BigDecimal grandTotal = calculateGrandTotal(products);
+
+        return new SalesSummary(products, revenuePerProduct, revenuePerCategory,
+                bestSeller, highestRevenue, grandTotal);
+    }
+
     public Map<Product, BigDecimal> TotalRevenuePerProduct(List<Product>products){
         HashMap<Product, BigDecimal> result = new LinkedHashMap<>();
 
