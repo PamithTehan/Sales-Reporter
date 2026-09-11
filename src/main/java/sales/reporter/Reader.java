@@ -51,5 +51,18 @@ public class Reader {
 
     }
 
-    
+    private boolean looksLikeHeader(String line) {
+        String[] tokens = splitRow(line);
+        if (tokens.length < EXPECTED_COLUMNS) {
+            return true; // malformed first line - safest to skip and let real rows be validated
+        }
+        Integer.parseInt(tokens[3].trim());
+        return false; // fourth column parses as a number -> this is a real data row
+
+        //catch number format exception
+    }
+
+    private String[] splitRow(String line) {
+        return line.split(",");
+    }
 }
