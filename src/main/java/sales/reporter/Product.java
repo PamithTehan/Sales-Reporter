@@ -38,4 +38,8 @@ public class Product {
     public BigDecimal getUnit_price() {
         return unit_price;
     }
+
+    public BigDecimal getRevenue(){
+        return unit_price.multiply(BigDecimal.valueOf(quantity_sold));
+    }
 }
