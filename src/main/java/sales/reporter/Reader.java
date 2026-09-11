@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -65,4 +66,22 @@ public class Reader {
     private String[] splitRow(String line) {
         return line.split(",");
     }
+
+    private Product parseLine(String line, int lineNumber)  {
+        String[] tokens = splitRow(line);
+
+        String productId = tokens[0].trim();
+        String productName = tokens[1].trim();
+        String category = tokens[2].trim();
+        String quantityRaw = tokens[3].trim();
+        String priceRaw = tokens[4].trim();
+
+
+        int quantitySold = Integer.parseInt(quantityRaw);
+        BigDecimal unitPrice = new BigDecimal(priceRaw);
+
+        return new Product(productId, productName, category, quantitySold, unitPrice);
+
+    }
+
 }
