@@ -22,5 +22,29 @@ public class SalesReporter {
 
         return result;
     }
-    
+
+    public Map<String, BigDecimal> totalRevenuePerCategory(List<Product> products){
+        HashMap<String, BigDecimal> results = new LinkedHashMap<>();
+
+        for(Product product: products){
+            results.merge(product.getCategory(),product.getRevenue(), BigDecimal::add);
+        }
+
+        return results;
+    }
+
+    public Product findBestSellingProduct(List<Product> products){
+        Product bestSellingProduct = null;
+
+        for(Product product:products){
+
+            if(bestSellingProduct == null || product.getQuantity_sold()> bestSellingProduct.getQuantity_sold()){
+                bestSellingProduct = product;
+            }
+        }
+
+        return bestSellingProduct;
+    }
+
+
 }
