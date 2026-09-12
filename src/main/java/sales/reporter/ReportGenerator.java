@@ -2,7 +2,7 @@ package sales.reporter;
 
 
 import sales.reporter.model.Product;
-import sales.reporter.report.SalesReporter;
+import sales.reporter.report.SalesCalculator;
 import sales.reporter.report.SalesSummary;
 
 import java.math.BigDecimal;
@@ -19,7 +19,7 @@ public class ReportGenerator {
         products.add(new Product("P102", "Mechanical Keyboard", "Electronics", 85, new BigDecimal("79.50")));
         products.add(new Product("P103", "Ergonomic Desk Chair", "Furniture", 40, new BigDecimal("199.99")));
 
-        SalesReporter reporter = new SalesReporter();
+        SalesCalculator reporter = new SalesCalculator();
         SalesSummary summary = reporter.calculate(products);
         ReportGenerator generator = new ReportGenerator();
 

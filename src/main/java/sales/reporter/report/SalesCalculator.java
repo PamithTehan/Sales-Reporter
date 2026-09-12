@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SalesReporter {
+public class SalesCalculator {
     //Total revenue per product (quantity_sold × unit_price)
     //Total revenue per category (sum of revenue for all products in that category)
     //Best-selling product (product with the highest quantity_sold)
@@ -69,7 +69,7 @@ public class SalesReporter {
 
         for(Product product:products){
 
-            if(highestRevenue == null || highestRevenue.compareTo(product.getRevenue()) > 0){
+            if(highestRevenue == null || product.getRevenue().compareTo(highestRevenue) > 0){
                 highestRevenueProduct = product;
                 highestRevenue = product.getRevenue();
             }
