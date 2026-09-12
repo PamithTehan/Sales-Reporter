@@ -1,6 +1,7 @@
-package sales.reporter.report;
+package sales.reporter.report.formatter;
 
 import sales.reporter.model.Product;
+import sales.reporter.report.SalesSummary;
 
 import java.math.BigDecimal;
 import java.util.Map;
