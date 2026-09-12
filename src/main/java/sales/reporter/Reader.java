@@ -1,5 +1,5 @@
 package sales.reporter;
-import sales.reporter.Product;
+import sales.reporter.model.Product;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

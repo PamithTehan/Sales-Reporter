@@ -1,6 +1,10 @@
 package sales.reporter;
 
 
+import sales.reporter.model.Product;
+import sales.reporter.report.SalesReporter;
+import sales.reporter.report.SalesSummary;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
