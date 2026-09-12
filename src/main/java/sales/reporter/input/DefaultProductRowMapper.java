@@ -1,6 +1,7 @@
 package sales.reporter.input;
 
-import sales.reporter.Product;
+import sales.reporter.model.Product;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public class DefaultProductRowMapper implements ProductRowMapper {
@@ -12,18 +13,22 @@ public class DefaultProductRowMapper implements ProductRowMapper {
     }
 
     @Override
-    public Product parseLine(String line, int lineNumber) {
+    public Product parseLine(String line, int lineNumber) throws IOException {
         String[] tokens = rowSplitter.splitRow(line);
 
-        String productId = tokens[0].trim();
-        String productName = tokens[1].trim();
-        String category = tokens[2].trim();
-        String quantityRaw = tokens[3].trim();
-        String priceRaw = tokens[4].trim();
+        try {
+            String productId = tokens[0].trim();
+            String productName = tokens[1].trim();
+            String category = tokens[2].trim();
+            String quantityRaw = tokens[3].trim();
+            String priceRaw = tokens[4].trim();
 
-        int quantitySold = Integer.parseInt(quantityRaw);
-        BigDecimal unitPrice = new BigDecimal(priceRaw);
+            int quantitySold = Integer.parseInt(quantityRaw);
+            BigDecimal unitPrice = new BigDecimal(priceRaw);
 
-        return new Product(productId, productName, category, quantitySold, unitPrice);
+            return new Product(productId, productName, category, quantitySold, unitPrice);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            throw new IOException("Invalid row at line " + lineNumber + ": '" + line + "'", e);
+        }
     }
 }
