@@ -1,5 +1,4 @@
 package sales.reporter.input;
-
 import sales.reporter.model.Product;
 
 import java.io.BufferedReader;
@@ -23,7 +22,6 @@ public class Reader {
         this.rowMapper = rowMapper;
     }
 
-    // Convenience constructor - wires the default implementations for normal callers.
     public Reader() {
         this(new DefaultRowSplitter());
     }
@@ -60,11 +58,15 @@ public class Reader {
                 }
                 headerSkipped = true; // only the very first non-blank line can be a header
 
-                products.add(rowMapper.parseLine(line, lineNumber));
+                try {
+                    products.add(rowMapper.parseLine(line, lineNumber));
+                } catch (IOException e) {
+                    // handle csv exception: skip the bad row and keep reading rather than
+                    // aborting the whole file. Change to `throw e;` if you want fail-fast instead.
+                    System.err.println("Skipping malformed row: " + e.getMessage());
+                }
             }
         }
-
-        //handle csv exception
 
         return products;
     }

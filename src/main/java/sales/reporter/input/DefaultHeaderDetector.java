@@ -16,9 +16,11 @@ public class DefaultHeaderDetector implements HeaderDetector {
         if (tokens.length < EXPECTED_COLUMNS) {
             return true; // malformed first line - safest to skip and let real rows be validated
         }
-        Integer.parseInt(tokens[3].trim());
-        return false; // fourth column parses as a number -> this is a real data row
-
-        //catch number format exception
+        try {
+            Integer.parseInt(tokens[3].trim());
+            return false; // fourth column parses as a number -> this is a real data row
+        } catch (NumberFormatException e) {
+            return true; // fourth column isn't numeric -> this looks like a header label
+        }
     }
 }
