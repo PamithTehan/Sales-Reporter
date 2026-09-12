@@ -31,7 +31,7 @@ public class Reader {
     }
 
     public List<Product> readProducts(String filePath)
-            throws IOException {
+            throws IOException, CsvParseException {
 
         Path path = Path.of(filePath);
         if (!Files.exists(path)) {
@@ -61,13 +61,14 @@ public class Reader {
                 try {
                     products.add(rowMapper.parseLine(line, lineNumber));
                 } catch (IOException e) {
-                    // handle csv exception: skip the bad row and keep reading rather than
-                    // aborting the whole file. Change to `throw e;` if you want fail-fast instead.
                     System.err.println("Skipping malformed row: " + e.getMessage());
                 }
             }
         }
 
+        if (products.isEmpty()) {
+            throw new CsvParseException("CSV file contains no product data rows: " + filePath);
+        }
         return products;
     }
 }
