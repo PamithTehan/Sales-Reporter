@@ -72,6 +72,11 @@ public class ReportGenerator {
         String outputMethod = args[1];
         String outputFilePath = args.length >= 3 ? args[2] : null;
 
+        if ("file".equalsIgnoreCase(outputMethod) && (outputFilePath == null || outputFilePath.trim().isEmpty())) {
+            System.err.println("Error: output file path is required when output method is 'file'.");
+            return 1;
+        }
+
         try {
             List<Product> products = reader.readProducts(csvFilePath);
             SalesSummary summary = calculatorService.calculate(products);
