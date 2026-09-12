@@ -12,10 +12,24 @@ import java.util.List;
 
 public class Reader {
 
+    private final RowSplitter rowSplitter;
+    private final HeaderDetector headerDetector;
+    private final ProductRowMapper rowMapper;
 
-    private final RowSplitter rowSplitter = new DefaultRowSplitter();
-    private final HeaderDetector headerDetector = new DefaultHeaderDetector(rowSplitter);
-    private final ProductRowMapper rowMapper = new DefaultProductRowMapper(rowSplitter);
+    public Reader(RowSplitter rowSplitter, HeaderDetector headerDetector, ProductRowMapper rowMapper) {
+        this.rowSplitter = rowSplitter;
+        this.headerDetector = headerDetector;
+        this.rowMapper = rowMapper;
+    }
+
+    // Convenience constructor - wires the default implementations for normal callers.
+    public Reader() {
+        this(new DefaultRowSplitter());
+    }
+
+    private Reader(RowSplitter rowSplitter) {
+        this(rowSplitter, new DefaultHeaderDetector(rowSplitter), new DefaultProductRowMapper(rowSplitter));
+    }
 
     public List<Product> readProducts(String filePath)
             throws IOException {
