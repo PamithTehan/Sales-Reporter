@@ -1,5 +1,6 @@
 package sales.reporter;
 
+import sales.reporter.input.CsvParseException;
 import sales.reporter.input.Reader;
 import sales.reporter.model.Product;
 import sales.reporter.output.InvalidOutputMethodException;
@@ -89,7 +90,10 @@ public class ReportGenerator {
         } catch (FileNotFoundException e) {
             System.err.println("Error: " + e.getMessage());
             return 2;
-        } catch (InvalidOutputMethodException e) {
+        } catch (CsvParseException e) {
+            System.err.println("Error: could not parse the CSV file - " + e.getMessage());
+            return 3;
+        }catch (InvalidOutputMethodException e) {
             System.err.println("Error: " + e.getMessage());
             return 4;
         } catch (IOException e) {
