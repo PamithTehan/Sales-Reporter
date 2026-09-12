@@ -1,8 +1,8 @@
-package sales.reporter;
+package sales.reporter.output;
 
 import java.io.IOException;
 
-public class Outputhandler {
+public class OutputHandler {
 
     public void output(OutputWriter writer, String reportContent) {
         try {

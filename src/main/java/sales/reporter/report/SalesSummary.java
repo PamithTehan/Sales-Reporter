@@ -1,4 +1,6 @@
-package sales.reporter;
+package sales.reporter.report;
+
+import sales.reporter.model.Product;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;

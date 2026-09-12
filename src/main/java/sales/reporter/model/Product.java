@@ -1,4 +1,4 @@
-package sales.reporter;
+package sales.reporter.model;
 
 import java.math.BigDecimal;
 
