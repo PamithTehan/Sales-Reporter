@@ -6,10 +6,10 @@ import sales.reporter.output.InvalidOutputMethodException;
 import sales.reporter.output.OutputHandler;
 import sales.reporter.output.OutputWriter;
 import sales.reporter.output.OutputWriterFactory;
-import sales.reporter.report.SalesCalculator;
+import sales.reporter.report.SalesCalculatorService;
 import sales.reporter.report.SalesSummary;
-import sales.reporter.report.formatter.ConsoleReportFormatter;
-import sales.reporter.report.formatter.PlainTextReportFormatter;
+import sales.reporter.report.formatter.ReportFormatter;
+import sales.reporter.report.formatter.ReportFormatterFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,22 +17,32 @@ import java.util.List;
 
 public class ReportGenerator {
 
-//    public static void main() {
-//        List<Product> products = new ArrayList<>();
-//
-//        products.add(new Product("P101", "Wireless Mouse", "Electronics", 150, new BigDecimal("25.99")));
-//        products.add(new Product("P102", "Mechanical Keyboard", "Electronics", 85, new BigDecimal("79.50")));
-//        products.add(new Product("P103", "Ergonomic Desk Chair", "Furniture", 40, new BigDecimal("199.99")));
-//
-//        SalesCalculator reporter = new SalesCalculator();
-//        SalesSummary summary = reporter.calculate(products);
-//        ReportFormatter formatter = new ConsoleReportFormatter();
-//
-//        String report = formatter.format(summary);
-//
-//        System.out.println(report);
-//
-//    }
+    private final Reader reader;
+    private final SalesCalculatorService calculatorService;
+    private final ReportFormatterFactory formatterFactory;
+    private final OutputWriterFactory writerFactory;
+    private final OutputHandler outputHandler;
+
+
+    public ReportGenerator(Reader reader,
+                           SalesCalculatorService calculatorService,
+                           ReportFormatterFactory formatterFactory,
+                           OutputWriterFactory writerFactory,
+                           OutputHandler outputHandler) {
+        this.reader = reader;
+        this.calculatorService = calculatorService;
+        this.formatterFactory = formatterFactory;
+        this.writerFactory = writerFactory;
+        this.outputHandler = outputHandler;
+    }
+
+    public ReportGenerator() {
+        this(new Reader(),
+                new sales.reporter.report.SalesCalculator(),
+                new ReportFormatterFactory(),
+                new OutputWriterFactory(),
+                new OutputHandler());
+    }
 
     public static void main(String[] args) {
         int exitCode = new ReportGenerator().run(args);
@@ -42,7 +52,7 @@ public class ReportGenerator {
     }
 
     public int run(String[] args) {
-        if (args.length < 2) {
+        if (args == null || args.length < 2) {
             System.err.println("Error: missing arguments.");
             System.err.println("Usage: java -jar SalesReporter.jar <csv-file-path> <output-method> [output-file-path]");
             return 1;
@@ -53,18 +63,14 @@ public class ReportGenerator {
         String outputFilePath = args.length >= 3 ? args[2] : null;
 
         try {
-            List<Product> products = new Reader().readProducts(csvFilePath);
-            SalesSummary summary = new SalesCalculator().calculate(products);
-            String reportText;
+            List<Product> products = reader.readProducts(csvFilePath);
+            SalesSummary summary = calculatorService.calculate(products);
 
-            if (args.length == 2) {
-                reportText = new ConsoleReportFormatter().format(summary);
-            } else {
-                reportText = new PlainTextReportFormatter().format(summary);
-            }
+            ReportFormatter formatter = formatterFactory.create(outputMethod);
+            String reportText = formatter.format(summary);
 
-            OutputWriter outputWriter = new OutputWriterFactory().create(outputMethod, outputFilePath);
-            new OutputHandler().output(outputWriter, reportText);
+            OutputWriter outputWriter = writerFactory.create(outputMethod, outputFilePath);
+            outputHandler.output(outputWriter, reportText);
 
             if ("file".equalsIgnoreCase(outputMethod)) {
                 System.out.println("Report successfully written to: " + outputFilePath);
@@ -85,4 +91,5 @@ public class ReportGenerator {
             return 6;
         }
     }
+
 }
