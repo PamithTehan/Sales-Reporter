@@ -12,9 +12,10 @@ import java.util.List;
 
 public class Reader {
 
-    private final RowSplitter rowSplitter = new RowSplitter();
-    private final HeaderDetector headerDetector = new HeaderDetector(rowSplitter);
-    private final ProductRowMapper rowMapper = new ProductRowMapper(rowSplitter);
+
+    private final RowSplitter rowSplitter = new DefaultRowSplitter();
+    private final HeaderDetector headerDetector = new DefaultHeaderDetector(rowSplitter);
+    private final ProductRowMapper rowMapper = new DefaultProductRowMapper(rowSplitter);
 
     public List<Product> readProducts(String filePath)
             throws IOException {
