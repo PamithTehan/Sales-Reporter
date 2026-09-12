@@ -1,6 +1,5 @@
 package sales.reporter;
 
-import java.io.Writer;
 
 public class ConsoleWriter implements OutputWriter {
 
