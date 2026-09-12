@@ -2,9 +2,29 @@ package sales.reporter;
 
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ReportGenerator {
+
+    public static void main() {
+        List<Product> products = new ArrayList<>();
+
+        products.add(new Product("P101", "Wireless Mouse", "Electronics", 150, new BigDecimal("25.99")));
+        products.add(new Product("P102", "Mechanical Keyboard", "Electronics", 85, new BigDecimal("79.50")));
+        products.add(new Product("P103", "Ergonomic Desk Chair", "Furniture", 40, new BigDecimal("199.99")));
+
+        SalesReporter reporter = new SalesReporter();
+        SalesSummary summary = reporter.calculate(products);
+        ReportGenerator generator = new ReportGenerator();
+
+        String report = generator.format(summary);
+
+        System.out.println(report);
+
+    }
+
 
     public String format(SalesSummary summary) {
 
