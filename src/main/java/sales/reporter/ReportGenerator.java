@@ -1,21 +1,19 @@
 package sales.reporter;
 
-
 import sales.reporter.input.Reader;
 import sales.reporter.model.Product;
 import sales.reporter.output.InvalidOutputMethodException;
+import sales.reporter.output.OutputHandler;
+import sales.reporter.output.OutputWriter;
+import sales.reporter.output.OutputWriterFactory;
 import sales.reporter.report.SalesCalculator;
 import sales.reporter.report.SalesSummary;
 import sales.reporter.report.formatter.ConsoleReportFormatter;
 import sales.reporter.report.formatter.PlainTextReportFormatter;
-import sales.reporter.report.formatter.ReportFormatter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ReportGenerator {
 
@@ -57,16 +55,16 @@ public class ReportGenerator {
         try {
             List<Product> products = new Reader().readProducts(csvFilePath);
             SalesSummary summary = new SalesCalculator().calculate(products);
-            String reportText = null;
+            String reportText;
 
             if (args.length == 2) {
                 reportText = new ConsoleReportFormatter().format(summary);
-            }else {
+            } else {
                 reportText = new PlainTextReportFormatter().format(summary);
             }
 
-            OutputStrategy outputStrategy = new OutputStrategyFactory().create(outputMethod, outputFilePath);
-            outputStrategy.write(reportText);
+            OutputWriter outputWriter = new OutputWriterFactory().create(outputMethod, outputFilePath);
+            new OutputHandler().output(outputWriter, reportText);
 
             if ("file".equalsIgnoreCase(outputMethod)) {
                 System.out.println("Report successfully written to: " + outputFilePath);
@@ -76,9 +74,6 @@ public class ReportGenerator {
         } catch (FileNotFoundException e) {
             System.err.println("Error: " + e.getMessage());
             return 2;
-        } catch (CsvParseException e) {
-            System.err.println("Error: could not parse the CSV file - " + e.getMessage());
-            return 3;
         } catch (InvalidOutputMethodException e) {
             System.err.println("Error: " + e.getMessage());
             return 4;
