@@ -1,18 +1,18 @@
 package sales.reporter;
 
-import java.io.FileWriter;
 import java.io.IOException;
 
 public class Outputhandler {
 
+    private final ConsoleWriter consoleWriter = new ConsoleWriter();
+    private final FileWriterHandler fileWriterHandler = new FileWriterHandler();
+
     public void output(String outputMethod, String outputFilePath, String reportContent) {
         if (outputMethod.equals("console")) {
-            System.out.println(reportContent);
+            consoleWriter.write(reportContent);
         } else if (outputMethod.equals("file")) {
             try {
-                FileWriter writer = new FileWriter(outputFilePath);
-                writer.write(reportContent);
-                writer.close();
+                fileWriterHandler.write(outputFilePath, reportContent);
             } catch (IOException e) {
                 System.out.println("Error writing to file: " + e.getMessage());
                 System.exit(1);
