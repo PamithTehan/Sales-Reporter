@@ -1,3 +1,4 @@
+<<<<<<<<< Temporary merge branch 1:src/main/java/sales/reporter/input/Reader.java
 package sales.reporter.input;
 import sales.reporter.Product;
 
