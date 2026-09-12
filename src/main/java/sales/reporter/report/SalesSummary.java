@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SalesSummary {
+public final class SalesSummary {
     private final List<Product> products;
     private final Map<Product, BigDecimal> revenuePerProduct;
     private final Map<String, BigDecimal> revenuePerCategory;

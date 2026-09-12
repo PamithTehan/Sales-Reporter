@@ -2,7 +2,7 @@ package sales.reporter.model;
 
 import java.math.BigDecimal;
 
-public class Product {
+public final class Product {
 
     //product_id, product_name, category, quantity_sold, unit_price
     private final String product_id;
