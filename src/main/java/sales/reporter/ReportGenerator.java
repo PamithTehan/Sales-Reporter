@@ -6,6 +6,7 @@ import sales.reporter.output.InvalidOutputMethodException;
 import sales.reporter.output.OutputHandler;
 import sales.reporter.output.OutputWriter;
 import sales.reporter.output.OutputWriterFactory;
+import sales.reporter.report.SalesCalculator;
 import sales.reporter.report.SalesCalculatorService;
 import sales.reporter.report.SalesSummary;
 import sales.reporter.report.formatter.ReportFormatter;
@@ -36,16 +37,24 @@ public class ReportGenerator {
         this.outputHandler = outputHandler;
     }
 
-    public ReportGenerator() {
-        this(new Reader(),
-                new sales.reporter.report.SalesCalculator(),
-                new ReportFormatterFactory(),
-                new OutputWriterFactory(),
-                new OutputHandler());
-    }
 
     public static void main(String[] args) {
-        int exitCode = new ReportGenerator().run(args);
+
+        Reader reader = new Reader();
+        SalesCalculatorService calculator = new SalesCalculator();
+        ReportFormatterFactory formatterFactory = new ReportFormatterFactory();
+        OutputWriterFactory writerFactory = new OutputWriterFactory();
+        OutputHandler outputHandler = new OutputHandler();
+
+        ReportGenerator app = new ReportGenerator(
+                reader,
+                calculator,
+                formatterFactory,
+                writerFactory,
+                outputHandler
+        );
+
+        int exitCode = app.run(args);
         if (exitCode != 0) {
             System.exit(exitCode);
         }
