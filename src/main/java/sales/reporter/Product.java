@@ -19,11 +19,11 @@ public class Product {
         unit_price = unitPrice;
     }
 
-    public String getProduct_id() {
+    public String getProductId() {
         return product_id;
     }
 
-    public String getProduct_name() {
+    public String getProductName() {
         return product_name;
     }
 
@@ -31,11 +31,11 @@ public class Product {
         return category;
     }
 
-    public int getQuantity_sold() {
+    public int getQuantitySold() {
         return quantity_sold;
     }
 
-    public BigDecimal getUnit_price() {
+    public BigDecimal getUnitPrice() {
         return unit_price;
     }
 
