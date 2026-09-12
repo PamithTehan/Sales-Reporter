@@ -1,4 +1,4 @@
-package sales.reporter;
+package sales.reporter.input;
 import sales.reporter.Product;
 
 import java.io.BufferedReader;
