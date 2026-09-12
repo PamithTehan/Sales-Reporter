@@ -1,4 +1,4 @@
-package sales.reporter;
+package sales.reporter.output;
 
 import java.io.FileWriter;
 import java.io.IOException;

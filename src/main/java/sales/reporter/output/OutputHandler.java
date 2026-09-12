@@ -1,4 +1,4 @@
-package sales.reporter;
+package sales.reporter.output;
 
 import java.io.IOException;
 
