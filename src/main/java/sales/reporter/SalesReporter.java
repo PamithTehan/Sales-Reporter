@@ -53,7 +53,7 @@ public class SalesReporter {
 
         for(Product product:products){
 
-            if(bestSellingProduct == null || product.getQuantity_sold()> bestSellingProduct.getQuantity_sold()){
+            if(bestSellingProduct == null || product.getQuantitySold()> bestSellingProduct.getQuantitySold()){
                 bestSellingProduct = product;
             }
         }
@@ -85,5 +85,4 @@ public class SalesReporter {
 
         return grandTotal;
     }
-
 }
