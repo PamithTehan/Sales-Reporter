@@ -8,9 +8,8 @@ import sales.reporter.output.OutputWriter;
 import sales.reporter.output.OutputWriterFactory;
 import sales.reporter.report.SalesCalculatorService;
 import sales.reporter.report.SalesSummary;
-import sales.reporter.report.formatter.ConsoleReportFormatter;
-import sales.reporter.report.formatter.PlainTextReportFormatter;
 import sales.reporter.report.formatter.ReportFormatter;
+import sales.reporter.report.formatter.ReportFormatterFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,16 +19,19 @@ public class ReportGenerator {
 
     private final Reader reader;
     private final SalesCalculatorService calculatorService;
+    private final ReportFormatterFactory formatterFactory;
     private final OutputWriterFactory writerFactory;
     private final OutputHandler outputHandler;
 
 
     public ReportGenerator(Reader reader,
                            SalesCalculatorService calculatorService,
+                           ReportFormatterFactory formatterFactory,
                            OutputWriterFactory writerFactory,
                            OutputHandler outputHandler) {
         this.reader = reader;
         this.calculatorService = calculatorService;
+        this.formatterFactory = formatterFactory;
         this.writerFactory = writerFactory;
         this.outputHandler = outputHandler;
     }
@@ -37,6 +39,7 @@ public class ReportGenerator {
     public ReportGenerator() {
         this(new Reader(),
                 new sales.reporter.report.SalesCalculator(),
+                new ReportFormatterFactory(),
                 new OutputWriterFactory(),
                 new OutputHandler());
     }
@@ -63,7 +66,7 @@ public class ReportGenerator {
             List<Product> products = reader.readProducts(csvFilePath);
             SalesSummary summary = calculatorService.calculate(products);
 
-            ReportFormatter formatter = resolveFormatter(outputMethod);
+            ReportFormatter formatter = formatterFactory.create(outputMethod);
             String reportText = formatter.format(summary);
 
             OutputWriter outputWriter = writerFactory.create(outputMethod, outputFilePath);
@@ -89,10 +92,4 @@ public class ReportGenerator {
         }
     }
 
-    private ReportFormatter resolveFormatter(String outputMethod) {
-        if ("console".equalsIgnoreCase(outputMethod)) {
-            return new ConsoleReportFormatter();
-        }
-        return new PlainTextReportFormatter();
-    }
 }
