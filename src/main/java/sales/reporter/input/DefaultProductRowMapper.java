@@ -1,6 +1,6 @@
 package sales.reporter.input;
 
-import sales.reporter.Product;
+import sales.reporter.model.Product;
 import java.math.BigDecimal;
 
 public class DefaultProductRowMapper implements ProductRowMapper {
