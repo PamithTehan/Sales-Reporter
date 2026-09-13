@@ -48,11 +48,15 @@ public class PlainTextReportFormatterTest {
         // Verify key structural headers and labels
         assertTrue(result.contains("PRODUCT SALES SUMMARY REPORT"));
         assertTrue(result.contains("--- Revenue Per Product ---"));
-        assertTrue(result.contains("P101 Mouse Electronics $100.00"));
+
+        // Match the column-padded format (%-10s %-20s %-15s $%.2f)
+        assertTrue(result.contains(String.format("%-10s %-20s %-15s $%.2f", "P101", "Mouse", "Electronics", new BigDecimal("100.00"))));
+
         assertTrue(result.contains("--- Revenue Per Category ---"));
-        assertTrue(result.contains("Electronics : $100.00"));
+        assertTrue(result.contains(String.format("%-20s : $%.2f", "Electronics", new BigDecimal("100.00"))));
+
         assertTrue(result.contains("--- Highlights ---"));
         assertTrue(result.contains("Best-Selling Product : Mouse (5 units)"));
-        assertTrue(result.contains("Grand Total Revenue : $100.00"));
+        assertTrue(result.contains("Grand Total Revenue  : $100.00"));
     }
 }
