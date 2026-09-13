@@ -29,16 +29,16 @@ public class PlainTextReportFormatter implements ReportFormatter {
 
     private void appendHeader(StringBuilder sb) {
         sb.append(DIVIDER).append(System.lineSeparator())
-                .append(" PRODUCT SALES SUMMARY REPORT").append(System.lineSeparator())
+                .append("                  PRODUCT SALES SUMMARY REPORT").append(System.lineSeparator())
                 .append(DIVIDER).append(System.lineSeparator());
     }
 
     private void appendProductRevenue(StringBuilder sb, Map<Product, BigDecimal> productRevenue) {
-        sb.append("--- Revenue Per Product ---").append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append("--- Revenue Per Product ---").append(System.lineSeparator());
         if (productRevenue != null) {
             for (Map.Entry<Product, BigDecimal> entry : productRevenue.entrySet()) {
                 Product product = entry.getKey();
-                sb.append(String.format("%s %s %s $%.2f%n",
+                sb.append(String.format("%-10s %-20s %-15s $%.2f%n",
                         product.getProductId(),
                         product.getProductName(),
                         product.getCategory(),
@@ -48,30 +48,38 @@ public class PlainTextReportFormatter implements ReportFormatter {
     }
 
     private void appendCategoryRevenue(StringBuilder sb, Map<String, BigDecimal> categoryRevenue) {
-        sb.append("--- Revenue Per Category ---").append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append("--- Revenue Per Category ---").append(System.lineSeparator());
         if (categoryRevenue != null) {
             for (Map.Entry<String, BigDecimal> entry : categoryRevenue.entrySet()) {
-                sb.append(String.format("%s : $%s%n", entry.getKey(), entry.getValue()));
+                sb.append(String.format("%-20s : $%.2f%n", entry.getKey(), entry.getValue()));
             }
         }
     }
 
     private void appendHighlights(StringBuilder sb, SalesSummary summary) {
-        sb.append("--- Highlights ---").append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append("--- Highlights ---").append(System.lineSeparator());
 
         Product bestSeller = summary.getBestSellingProduct();
         if (bestSeller != null) {
             sb.append(String.format("Best-Selling Product : %s (%d units)%n",
                     bestSeller.getProductName(), bestSeller.getQuantitySold()));
+        } else {
+            sb.append("Best-Selling Product : N/A").append(System.lineSeparator());
         }
 
         Product highestRevenue = summary.getHighestRevenueProduct();
         if (highestRevenue != null) {
-            sb.append(String.format("Highest Revenue : %s ($%s)%n",
+            sb.append(String.format("Highest Revenue      : %s ($%.2f)%n",
                     highestRevenue.getProductName(), highestRevenue.getRevenue()));
+        } else {
+            sb.append("Highest Revenue      : N/A").append(System.lineSeparator());
         }
 
-        sb.append(String.format("Grand Total Revenue : $%s%n", summary.getGrandTotalRevenue()));
+        BigDecimal grandTotal = summary.getGrandTotalRevenue() != null
+                ? summary.getGrandTotalRevenue()
+                : BigDecimal.ZERO;
+
+        sb.append(String.format("Grand Total Revenue  : $%.2f%n", grandTotal));
     }
 
     private void appendFooter(StringBuilder sb) {
