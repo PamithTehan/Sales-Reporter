@@ -1,5 +1,7 @@
 package sales.reporter.report.formatter;
 
+import sales.reporter.output.InvalidOutputMethodException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +14,14 @@ public class ReportFormatterFactory {
         formatters.put("file", new PlainTextReportFormatter());
     }
 
-    public ReportFormatter create(String outputMethod) {
+    public ReportFormatter create(String outputMethod) throws InvalidOutputMethodException {
         if (outputMethod == null) {
-            return new ConsoleReportFormatter();
+            throw new InvalidOutputMethodException("Output method cannot be null.");
         }
 
         ReportFormatter formatter = formatters.get(outputMethod.trim().toLowerCase());
         if (formatter == null) {
-            return new PlainTextReportFormatter();
+            throw new InvalidOutputMethodException("Unsupported output method: " + outputMethod);
         }
 
         return formatter;

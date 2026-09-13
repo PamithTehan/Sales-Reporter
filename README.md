@@ -84,7 +84,7 @@ sales.reporter
 ### 2. Design Patterns Applied
 
 - **Factory Method Pattern:**
-  - `ReportFormatterFactory`: Dynamically instantiates the appropriate `ReportFormatter` based on the requested output type (`console` vs `file`).
+  - `ReportFormatterFactory`: Uses a pre-populated `Map<String, ReportFormatter>` registry to resolve the appropriate `ReportFormatter` by output type key (`console` → `ConsoleReportFormatter`, `file` → `PlainTextReportFormatter`), supporting case-insensitive lookup with trimming.
   - `OutputWriterFactory`: Encapsulates creation of `OutputWriter` instances (`ConsoleWriter`, `FileWriterHandler`), validating required configuration such as file target paths.
 - **Strategy Pattern:**
   - Used for report formatting (`ReportFormatter` implementations) and report output writing (`OutputWriter` implementations).
@@ -99,6 +99,7 @@ sales.reporter
 Sales-Reporter/
 ├── pom.xml                                  # Maven project configuration & dependencies
 ├── sample.csv                               # Sample dataset for demonstration and testing
+├── sales_report.txt                         # Generated sample report output
 ├── src/
 │   ├── main/
 │   │   └── java/
@@ -136,13 +137,20 @@ Sales-Reporter/
 │       └── java/
 │           └── sales/
 │               └── reporter/
+│                   ├── ReportGeneratorTest.java                 # Integration tests for CLI orchestration & exit codes
 │                   ├── input/
 │                   │   ├── DefaultHeaderDetectorTest.java       # Unit tests for header detection
 │                   │   ├── DefaultProductRowMapperTest.java     # Unit tests for row mapping & invalid lines
 │                   │   └── ReaderTest.java                      # Unit tests for file ingestion & skipping
-│                   └── output/
-│                       ├── FileWriterHandlerTest.java           # Unit tests for file output writing
-│                       └── OutputWriterFactoryTest.java         # Unit tests for writer creation
+│                   ├── output/
+│                   │   ├── FileWriterHandlerTest.java           # Unit tests for file output writing
+│                   │   └── OutputWriterFactoryTest.java         # Unit tests for writer creation
+│                   └── report/
+│                       ├── SalesCalculatorTest.java             # Unit tests for calculation engine
+│                       └── formatter/
+│                           ├── ConsoleReportFormatterTest.java  # Unit tests for console formatting
+│                           ├── PlainTextReportFormatterTest.java# Unit tests for plain text formatting
+│                           └── ReportFormatterFactoryTest.java  # Unit tests for formatter factory
 ```
 
 ---
@@ -227,15 +235,18 @@ P005, HDMI Cable, Electronics, 20, 12.00
 =====================================================================
                   PRODUCT SALES SUMMARY REPORT
 =====================================================================
+
 --- Revenue Per Product ---
 P001       Wireless Mouse       Electronics     $306.00
 P002       Notebook             Stationery      $131.25
 P003       USB Hub              Electronics     $144.00
 P004       Ballpoint Pen        Stationery      $50.00
 P005       HDMI Cable           Electronics     $240.00
+
 --- Revenue Per Category ---
 Electronics          : $690.00
 Stationery           : $181.25
+
 --- Highlights ---
 Best-Selling Product : Ballpoint Pen (100 units)
 Highest Revenue      : Wireless Mouse ($306.00)
@@ -263,12 +274,25 @@ The application provides standardized process exit codes to facilitate integrati
 
 ## 🧪 Testing
 
-Unit tests are written with **JUnit 5 (Jupiter)** and cover:
-- Detection of standard headers vs. data rows (`DefaultHeaderDetectorTest`)
-- Token mapping and handling of malformed number formats (`DefaultProductRowMapperTest`)
-- Ingestion of valid lines, skipping of empty/malformed rows, and empty file detection (`ReaderTest`)
-- File creation and content persistence (`FileWriterHandlerTest`)
-- Writer factory instantiation logic and error validation (`OutputWriterFactoryTest`)
+Unit and integration tests are written with **JUnit 5 Jupiter (v5.10.2)** and cover all layers of the application:
+
+### Input Layer
+- **`DefaultHeaderDetectorTest`** — Verifies header detection (non-numeric vs numeric 4th column) and regression testing against `NumberFormatException`.
+- **`DefaultProductRowMapperTest`** — Validates token-to-`Product` mapping and asserts `IOException` is thrown for non-numeric quantities and rows with too few columns.
+- **`ReaderTest`** — End-to-end ingestion tests using `@TempDir`: header/blank-line handling, malformed row skipping, `FileNotFoundException` for missing files, and `CsvParseException` when no valid data rows exist.
+
+### Report Layer
+- **`SalesCalculatorTest`** — Validates aggregate calculations: grand total revenue, best-selling product by quantity, highest revenue product, category-level revenue, and per-product revenue. Asserts `IllegalArgumentException` for null and empty product lists.
+- **`ConsoleReportFormatterTest`** — Verifies formatted console output contains expected section headers, product highlights, and graceful fallback messages (`N/A`, `$0.00`) for empty/null summary metrics.
+- **`PlainTextReportFormatterTest`** — Verifies plain text file output contains all expected structural sections (revenue per product, per category, highlights) and asserts `IllegalArgumentException` for null summaries.
+- **`ReportFormatterFactoryTest`** — Tests factory resolution of `console` → `ConsoleReportFormatter` and `file` → `PlainTextReportFormatter`, including case-insensitive input handling and `InvalidOutputMethodException` for null/unknown methods.
+
+### Output Layer
+- **`FileWriterHandlerTest`** — Verifies report content is correctly written to disk and that subsequent writes overwrite previous content.
+- **`OutputWriterFactoryTest`** — Tests correct writer selection for `console` and `file` methods, and correct exception behaviour for null, invalid, and missing/blank file path arguments.
+
+### Integration (Orchestration)
+- **`ReportGeneratorTest`** — Tests the full CLI pipeline orchestration using lightweight stub implementations. Validates all six exit code paths (1–6) for missing arguments, `FileNotFoundException`, `CsvParseException`, `InvalidOutputMethodException`, `IOException`, and `IllegalArgumentException`, plus successful console and file output runs (exit code 0).
 
 Execute the complete test suite:
 ```bash

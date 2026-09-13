@@ -13,6 +13,7 @@ public class ConsoleReportFormatter implements ReportFormatter {
     private static final String SECTION_PREFIX = "--- ";
     private static final String SECTION_SUFFIX = " ---";
 
+
     @Override
     public String format(SalesSummary summary) {
 
@@ -38,7 +39,7 @@ public class ConsoleReportFormatter implements ReportFormatter {
     }
 
     private void appendProductRevenue(StringBuilder sb, Map<Product, BigDecimal> productRevenue) {
-        sb.append(SECTION_PREFIX).append("Revenue Per Product").append(SECTION_SUFFIX).append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append(SECTION_PREFIX).append("Revenue Per Product").append(SECTION_SUFFIX).append(System.lineSeparator());
 
         if (productRevenue == null || productRevenue.isEmpty()) {
             sb.append("No product revenue data available.").append(System.lineSeparator());
@@ -56,7 +57,7 @@ public class ConsoleReportFormatter implements ReportFormatter {
     }
 
     private void appendCategoryRevenue(StringBuilder sb, Map<String, BigDecimal> categoryRevenue) {
-        sb.append(SECTION_PREFIX).append("Revenue Per Category").append(SECTION_SUFFIX).append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append(SECTION_PREFIX).append("Revenue Per Category").append(SECTION_SUFFIX).append(System.lineSeparator());
 
         if (categoryRevenue == null || categoryRevenue.isEmpty()) {
             sb.append("No category revenue data available.").append(System.lineSeparator());
@@ -69,7 +70,7 @@ public class ConsoleReportFormatter implements ReportFormatter {
     }
 
     private void appendHighlights(StringBuilder sb, SalesSummary summary) {
-        sb.append(SECTION_PREFIX).append("Highlights").append(SECTION_SUFFIX).append(System.lineSeparator());
+        sb.append(System.lineSeparator()).append(SECTION_PREFIX).append("Highlights").append(SECTION_SUFFIX).append(System.lineSeparator());
 
         Product bestSeller = summary.getBestSellingProduct();
         if (bestSeller != null) {

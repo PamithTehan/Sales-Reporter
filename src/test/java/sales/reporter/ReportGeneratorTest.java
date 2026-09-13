@@ -1,5 +1,6 @@
 package sales.reporter;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sales.reporter.input.CsvParseException;
@@ -14,8 +15,10 @@ import sales.reporter.report.SalesSummary;
 import sales.reporter.report.formatter.ReportFormatter;
 import sales.reporter.report.formatter.ReportFormatterFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +30,6 @@ public class ReportGeneratorTest {
     // --- Lightweight Stubs for Testing Pipeline Orchestration ---
 
     private static class StubReader extends Reader {
-        // FIXED: Using Exception because CsvParseException is a checked exception
         private Exception exceptionToThrow;
         private List<Product> productsToReturn = Collections.emptyList();
 
@@ -69,13 +71,11 @@ public class ReportGeneratorTest {
     private static class StubOutputWriterFactory extends OutputWriterFactory {
         private boolean shouldThrowInvalidMethod = false;
 
-        // FIXED: Added throws InvalidOutputMethodException (checked exception)
         @Override
         public OutputWriter create(String outputMethod, String destination) throws InvalidOutputMethodException {
             if (shouldThrowInvalidMethod) {
                 throw new InvalidOutputMethodException("Invalid output method");
             }
-            // FIXED: Lambda takes 1 parameter (content) matching OutputWriter interface
             return content -> { /* no-op */ };
         }
     }
@@ -91,7 +91,12 @@ public class ReportGeneratorTest {
         }
     }
 
-    // --- Test Fixtures ---
+    // --- Test Fixtures & Stream Captures ---
+
+    private final PrintStream originalOut = System.out;
+    private final PrintStream originalErr = System.err;
+    private ByteArrayOutputStream outContent;
+    private ByteArrayOutputStream errContent;
 
     private StubReader stubReader;
     private StubSalesCalculator stubCalculator;
@@ -102,6 +107,12 @@ public class ReportGeneratorTest {
 
     @BeforeEach
     void setUp() {
+        // Redirect standard streams to suppress noisy error logs during testing
+        outContent = new ByteArrayOutputStream();
+        errContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setErr(new PrintStream(errContent));
+
         stubReader = new StubReader();
         stubCalculator = new StubSalesCalculator();
         stubFormatterFactory = new StubReportFormatterFactory();
@@ -115,6 +126,13 @@ public class ReportGeneratorTest {
                 stubWriterFactory,
                 stubOutputHandler
         );
+    }
+
+    @AfterEach
+    void tearDown() {
+        // Restore standard output streams after each test finishes
+        System.setOut(originalOut);
+        System.setErr(originalErr);
     }
 
     // --- Test Cases ---
@@ -164,7 +182,6 @@ public class ReportGeneratorTest {
 
     @Test
     void run_CsvParseException_ReturnsExitCode3() {
-        // FIXED: Works cleanly with checked CsvParseException
         stubReader.exceptionToThrow = new CsvParseException("Corrupted header format");
         String[] args = {"invalid.csv", "console"};
 
