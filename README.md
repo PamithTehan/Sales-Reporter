@@ -227,15 +227,18 @@ P005, HDMI Cable, Electronics, 20, 12.00
 =====================================================================
                   PRODUCT SALES SUMMARY REPORT
 =====================================================================
+
 --- Revenue Per Product ---
 P001       Wireless Mouse       Electronics     $306.00
 P002       Notebook             Stationery      $131.25
 P003       USB Hub              Electronics     $144.00
 P004       Ballpoint Pen        Stationery      $50.00
 P005       HDMI Cable           Electronics     $240.00
+
 --- Revenue Per Category ---
 Electronics          : $690.00
 Stationery           : $181.25
+
 --- Highlights ---
 Best-Selling Product : Ballpoint Pen (100 units)
 Highest Revenue      : Wireless Mouse ($306.00)
